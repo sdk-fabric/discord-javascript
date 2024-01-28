@@ -1,0 +1,8 @@
+{
+  "type": "client-javascript",
+  "require": {
+    "sdkfabric/discord": {
+      "target": "./src"
+    }
+  }
+}
