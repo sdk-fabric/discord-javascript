@@ -13,10 +13,10 @@ export class ChannelMessageTag extends TagAbstract {
     /**
      * Retrieves the messages in a channel.
      *
-     * @returns {Promise<Message>}
+     * @returns {Promise<Array<Message>>}
      * @throws {ClientException}
      */
-    public async getAll(channelId: string, around?: string, before?: string, after?: string, limit?: number): Promise<Message> {
+    public async getAll(channelId: string, around?: string, before?: string, after?: string, limit?: number): Promise<Array<Message>> {
         const url = this.parser.url('/channels/:channel_id/messages', {
             'channel_id': channelId,
         });
@@ -33,7 +33,7 @@ export class ChannelMessageTag extends TagAbstract {
         };
 
         try {
-            const response = await this.httpClient.request<Message>(params);
+            const response = await this.httpClient.request<Array<Message>>(params);
             return response.data;
         } catch (error) {
             if (error instanceof ClientException) {
