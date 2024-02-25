@@ -11,7 +11,7 @@ import {Message} from "./Message";
 
 export class ChannelMessageTag extends TagAbstract {
     /**
-     * Retrieves the messages in a channel
+     * Retrieves the messages in a channel.
      *
      * @returns {Promise<Message>}
      * @throws {ClientException}
