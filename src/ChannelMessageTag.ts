@@ -11,6 +11,45 @@ import {Message} from "./Message";
 
 export class ChannelMessageTag extends TagAbstract {
     /**
+     * Retrieves the messages in a channel.
+     *
+     * @returns {Promise<Array<Message>>}
+     * @throws {ClientException}
+     */
+    public async getAll(channelId: string, around?: string, before?: string, after?: string, limit?: number): Promise<Array<Message>> {
+        const url = this.parser.url('/channels/:channel_id/messages', {
+            'channel_id': channelId,
+        });
+
+        let params: AxiosRequestConfig = {
+            url: url,
+            method: 'GET',
+            params: this.parser.query({
+                'around': around,
+                'before': before,
+                'after': after,
+                'limit': limit,
+            }),
+        };
+
+        try {
+            const response = await this.httpClient.request<Array<Message>>(params);
+            return response.data;
+        } catch (error) {
+            if (error instanceof ClientException) {
+                throw error;
+            } else if (axios.isAxiosError(error) && error.response) {
+                switch (error.response.status) {
+                    default:
+                        throw new UnknownStatusCodeException('The server returned an unknown status code');
+                }
+            } else {
+                throw new ClientException('An unknown error occurred: ' + String(error));
+            }
+        }
+    }
+
+    /**
      * Retrieves a specific message in the channel. Returns a message object on success.
      *
      * @returns {Promise<Message>}
