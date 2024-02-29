@@ -121,6 +121,43 @@ export class ChannelMessageTag extends TagAbstract {
     }
 
     /**
+     * Edit a previously sent message. The fields content, embeds, and flags can be edited by the original message author. Other users can only edit flags and only if they have the MANAGE_MESSAGES permission in the corresponding channel. When specifying flags, ensure to include all previously set flags/bits in addition to ones that you are modifying. Only flags documented in the table below may be modified by users (unsupported flag changes are currently ignored without error).
+     *
+     * @returns {Promise<Message>}
+     * @throws {ClientException}
+     */
+    public async update(channelId: string, messageId: string, payload: Message): Promise<Message> {
+        const url = this.parser.url('/channels/:channel_id/messages/:message_id', {
+            'channel_id': channelId,
+            'message_id': messageId,
+        });
+
+        let params: AxiosRequestConfig = {
+            url: url,
+            method: 'PATCH',
+            params: this.parser.query({
+            }),
+            data: payload
+        };
+
+        try {
+            const response = await this.httpClient.request<Message>(params);
+            return response.data;
+        } catch (error) {
+            if (error instanceof ClientException) {
+                throw error;
+            } else if (axios.isAxiosError(error) && error.response) {
+                switch (error.response.status) {
+                    default:
+                        throw new UnknownStatusCodeException('The server returned an unknown status code');
+                }
+            } else {
+                throw new ClientException('An unknown error occurred: ' + String(error));
+            }
+        }
+    }
+
+    /**
      * Delete a message. If operating on a guild channel and trying to delete a message that was not sent by the current user, this endpoint requires the MANAGE_MESSAGES permission.
      *
      * @returns {Promise<void>}
