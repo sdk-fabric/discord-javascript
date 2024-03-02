@@ -9,7 +9,6 @@ on:
       typehub_changelog:
         required: false
 permissions:
-  actions: 'write'
   contents: 'write'
 jobs:
   generate:
@@ -23,3 +22,18 @@ jobs:
           typehub_message: '${{ inputs.typehub_message }}'
           typehub_version: '${{ inputs.typehub_version }}'
           typehub_changelog: '${{ inputs.typehub_changelog }}'
+  publish:
+    needs: generate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+          registry-url: 'https://registry.npmjs.org'
+      - run: npm version ${{ inputs.typehub_version }}
+      - run: npm ci
+      - run: npm run build
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
