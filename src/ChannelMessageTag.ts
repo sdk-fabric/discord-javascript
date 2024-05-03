@@ -29,7 +29,8 @@ export class ChannelMessageTag extends TagAbstract {
                 'before': before,
                 'after': after,
                 'limit': limit,
-            }),
+            }, [
+            ]),
         };
 
         try {
@@ -65,7 +66,8 @@ export class ChannelMessageTag extends TagAbstract {
             url: url,
             method: 'GET',
             params: this.parser.query({
-            }),
+            }, [
+            ]),
         };
 
         try {
@@ -91,7 +93,7 @@ export class ChannelMessageTag extends TagAbstract {
      * @returns {Promise<Message>}
      * @throws {ClientException}
      */
-    public async create(channelId: string): Promise<Message> {
+    public async create(channelId: string, payload: Message): Promise<Message> {
         const url = this.parser.url('/channels/:channel_id/messages', {
             'channel_id': channelId,
         });
@@ -100,7 +102,9 @@ export class ChannelMessageTag extends TagAbstract {
             url: url,
             method: 'POST',
             params: this.parser.query({
-            }),
+            }, [
+            ]),
+            data: payload
         };
 
         try {
@@ -136,7 +140,8 @@ export class ChannelMessageTag extends TagAbstract {
             url: url,
             method: 'PATCH',
             params: this.parser.query({
-            }),
+            }, [
+            ]),
             data: payload
         };
 
@@ -173,7 +178,8 @@ export class ChannelMessageTag extends TagAbstract {
             url: url,
             method: 'DELETE',
             params: this.parser.query({
-            }),
+            }, [
+            ]),
         };
 
         try {
@@ -208,7 +214,8 @@ export class ChannelMessageTag extends TagAbstract {
             url: url,
             method: 'POST',
             params: this.parser.query({
-            }),
+            }, [
+            ]),
         };
 
         try {
