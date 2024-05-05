@@ -12,4 +12,6 @@ export interface Message {
     embeds?: Array<MessageEmbed>
     allowed_mentions?: MessageAllowedMentions
     message_reference?: string
+    flags?: number
+    enforce_nonce?: boolean
 }
