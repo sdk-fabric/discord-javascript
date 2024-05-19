@@ -8,6 +8,7 @@ import {TagAbstract} from "sdkgen-client"
 import {ClientException, UnknownStatusCodeException} from "sdkgen-client";
 
 import {ChannelMessageTag} from "./ChannelMessageTag";
+import {Message} from "./Message";
 
 export class ChannelTag extends TagAbstract {
     public message(): ChannelMessageTag
@@ -16,6 +17,42 @@ export class ChannelTag extends TagAbstract {
             this.httpClient,
             this.parser
         );
+    }
+
+    /**
+     * Pin a message in a channel. Requires the MANAGE_MESSAGES permission. Returns a 204 empty response on success. Fires a Channel Pins Update Gateway event.
+     *
+     * @returns {Promise<Array<Message>>}
+     * @throws {ClientException}
+     */
+    public async getPins(channelId: string): Promise<Array<Message>> {
+        const url = this.parser.url('/channels/:channel_id/pins', {
+            'channel_id': channelId,
+        });
+
+        let params: AxiosRequestConfig = {
+            url: url,
+            method: 'GET',
+            params: this.parser.query({
+            }, [
+            ]),
+        };
+
+        try {
+            const response = await this.httpClient.request<Array<Message>>(params);
+            return response.data;
+        } catch (error) {
+            if (error instanceof ClientException) {
+                throw error;
+            } else if (axios.isAxiosError(error) && error.response) {
+                switch (error.response.status) {
+                    default:
+                        throw new UnknownStatusCodeException('The server returned an unknown status code');
+                }
+            } else {
+                throw new ClientException('An unknown error occurred: ' + String(error));
+            }
+        }
     }
 
 
