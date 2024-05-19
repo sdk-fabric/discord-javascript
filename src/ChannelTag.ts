@@ -7,6 +7,7 @@ import axios, {AxiosRequestConfig} from "axios";
 import {TagAbstract} from "sdkgen-client"
 import {ClientException, UnknownStatusCodeException} from "sdkgen-client";
 
+import {Channel} from "./Channel";
 import {ChannelMessageTag} from "./ChannelMessageTag";
 import {Message} from "./Message";
 
@@ -17,6 +18,42 @@ export class ChannelTag extends TagAbstract {
             this.httpClient,
             this.parser
         );
+    }
+
+    /**
+     * Get a channel by ID. Returns a channel object.
+     *
+     * @returns {Promise<Channel>}
+     * @throws {ClientException}
+     */
+    public async get(channelId: string): Promise<Channel> {
+        const url = this.parser.url('/channels/:channel_id', {
+            'channel_id': channelId,
+        });
+
+        let params: AxiosRequestConfig = {
+            url: url,
+            method: 'GET',
+            params: this.parser.query({
+            }, [
+            ]),
+        };
+
+        try {
+            const response = await this.httpClient.request<Channel>(params);
+            return response.data;
+        } catch (error) {
+            if (error instanceof ClientException) {
+                throw error;
+            } else if (axios.isAxiosError(error) && error.response) {
+                switch (error.response.status) {
+                    default:
+                        throw new UnknownStatusCodeException('The server returned an unknown status code');
+                }
+            } else {
+                throw new ClientException('An unknown error occurred: ' + String(error));
+            }
+        }
     }
 
     /**
