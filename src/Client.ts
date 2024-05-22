@@ -5,7 +5,7 @@
 
 import axios, {AxiosRequestConfig} from "axios";
 import {ClientAbstract, CredentialsInterface, TokenStoreInterface} from "sdkgen-client"
-import {OAuth2} from "sdkgen-client"
+import {HttpBearer} from "sdkgen-client"
 import {ClientException, UnknownStatusCodeException} from "sdkgen-client";
 
 import {ChannelTag} from "./ChannelTag";
@@ -21,8 +21,8 @@ export class Client extends ClientAbstract {
 
 
 
-    public static build(clientId: string, clientSecret: string, tokenStore: TokenStoreInterface|null, scopes: Array<string>|null): Client
+    public static build(token: string): Client
     {
-        return new Client('https://discord.com/api/v10', new OAuth2(clientId, clientSecret, 'https://discord.com/api/oauth2/token', 'https://discord.com/oauth2/authorize', tokenStore, scopes));
+        return new Client('https://discord.com/api/v10', new HttpBearer(token));
     }
 }

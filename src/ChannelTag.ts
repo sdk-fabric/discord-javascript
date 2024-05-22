@@ -9,12 +9,21 @@ import {ClientException, UnknownStatusCodeException} from "sdkgen-client";
 
 import {Channel} from "./Channel";
 import {ChannelMessageTag} from "./ChannelMessageTag";
+import {ChannelReactionTag} from "./ChannelReactionTag";
 import {Message} from "./Message";
 
 export class ChannelTag extends TagAbstract {
     public message(): ChannelMessageTag
     {
         return new ChannelMessageTag(
+            this.httpClient,
+            this.parser
+        );
+    }
+
+    public reaction(): ChannelReactionTag
+    {
+        return new ChannelReactionTag(
             this.httpClient,
             this.parser
         );
