@@ -49,5 +49,39 @@ export class ChannelReactionTag extends TagAbstract {
         }
     }
 
+    /**
+     * @returns {Promise<void>}
+     * @throws {ClientException}
+     */
+    public async deleteAll(channelId: string, messageId: string): Promise<void> {
+        const url = this.parser.url('/channels/:channel_id/messages/:message_id/reactions', {
+            'channel_id': channelId,
+            'message_id': messageId,
+        });
+
+        let params: AxiosRequestConfig = {
+            url: url,
+            method: 'DELETE',
+            params: this.parser.query({
+            }, [
+            ]),
+        };
+
+        try {
+            const response = await this.httpClient.request(params);
+        } catch (error) {
+            if (error instanceof ClientException) {
+                throw error;
+            } else if (axios.isAxiosError(error) && error.response) {
+                switch (error.response.status) {
+                    default:
+                        throw new UnknownStatusCodeException('The server returned an unknown status code');
+                }
+            } else {
+                throw new ClientException('An unknown error occurred: ' + String(error));
+            }
+        }
+    }
+
 
 }
