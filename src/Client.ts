@@ -9,11 +9,20 @@ import {HttpBearer} from "sdkgen-client"
 import {ClientException, UnknownStatusCodeException} from "sdkgen-client";
 
 import {ChannelTag} from "./ChannelTag";
+import {UserTag} from "./UserTag";
 
 export class Client extends ClientAbstract {
     public channel(): ChannelTag
     {
         return new ChannelTag(
+            this.httpClient,
+            this.parser
+        );
+    }
+
+    public user(): UserTag
+    {
+        return new UserTag(
             this.httpClient,
             this.parser
         );
