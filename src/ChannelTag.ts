@@ -10,6 +10,7 @@ import {ClientException, UnknownStatusCodeException} from "sdkgen-client";
 import {Channel} from "./Channel";
 import {ChannelMessageTag} from "./ChannelMessageTag";
 import {ChannelReactionTag} from "./ChannelReactionTag";
+import {ErrorException} from "./ErrorException";
 import {Message} from "./Message";
 
 export class ChannelTag extends TagAbstract {
@@ -33,6 +34,7 @@ export class ChannelTag extends TagAbstract {
      * Get a channel by ID. Returns a channel object.
      *
      * @returns {Promise<Channel>}
+     * @throws {ErrorExceptionException}
      * @throws {ClientException}
      */
     public async get(channelId: string): Promise<Channel> {
@@ -56,6 +58,12 @@ export class ChannelTag extends TagAbstract {
                 throw error;
             } else if (axios.isAxiosError(error) && error.response) {
                 switch (error.response.status) {
+                    case 400:
+                        throw new ErrorException(error.response.data);
+                    case 404:
+                        throw new ErrorException(error.response.data);
+                    case 500:
+                        throw new ErrorException(error.response.data);
                     default:
                         throw new UnknownStatusCodeException('The server returned an unknown status code');
                 }
@@ -69,6 +77,7 @@ export class ChannelTag extends TagAbstract {
      * Returns all pinned messages in the channel as an array of message objects.
      *
      * @returns {Promise<Array<Message>>}
+     * @throws {ErrorExceptionException}
      * @throws {ClientException}
      */
     public async getPins(channelId: string): Promise<Array<Message>> {
@@ -92,6 +101,12 @@ export class ChannelTag extends TagAbstract {
                 throw error;
             } else if (axios.isAxiosError(error) && error.response) {
                 switch (error.response.status) {
+                    case 400:
+                        throw new ErrorException(error.response.data);
+                    case 404:
+                        throw new ErrorException(error.response.data);
+                    case 500:
+                        throw new ErrorException(error.response.data);
                     default:
                         throw new UnknownStatusCodeException('The server returned an unknown status code');
                 }

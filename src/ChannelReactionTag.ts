@@ -7,11 +7,13 @@ import axios, {AxiosRequestConfig} from "axios";
 import {TagAbstract} from "sdkgen-client"
 import {ClientException, UnknownStatusCodeException} from "sdkgen-client";
 
+import {ErrorException} from "./ErrorException";
 import {User} from "./User";
 
 export class ChannelReactionTag extends TagAbstract {
     /**
      * @returns {Promise<Array<User>>}
+     * @throws {ErrorExceptionException}
      * @throws {ClientException}
      */
     public async getAll(channelId: string, messageId: string, emoji: string, type?: number, after?: string, limit?: number): Promise<Array<User>> {
@@ -40,6 +42,12 @@ export class ChannelReactionTag extends TagAbstract {
                 throw error;
             } else if (axios.isAxiosError(error) && error.response) {
                 switch (error.response.status) {
+                    case 400:
+                        throw new ErrorException(error.response.data);
+                    case 404:
+                        throw new ErrorException(error.response.data);
+                    case 500:
+                        throw new ErrorException(error.response.data);
                     default:
                         throw new UnknownStatusCodeException('The server returned an unknown status code');
                 }
@@ -51,6 +59,7 @@ export class ChannelReactionTag extends TagAbstract {
 
     /**
      * @returns {Promise<void>}
+     * @throws {ErrorExceptionException}
      * @throws {ClientException}
      */
     public async deleteAll(channelId: string, messageId: string): Promise<void> {
@@ -74,6 +83,12 @@ export class ChannelReactionTag extends TagAbstract {
                 throw error;
             } else if (axios.isAxiosError(error) && error.response) {
                 switch (error.response.status) {
+                    case 400:
+                        throw new ErrorException(error.response.data);
+                    case 404:
+                        throw new ErrorException(error.response.data);
+                    case 500:
+                        throw new ErrorException(error.response.data);
                     default:
                         throw new UnknownStatusCodeException('The server returned an unknown status code');
                 }
