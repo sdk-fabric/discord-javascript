@@ -6,15 +6,25 @@
 import axios, {AxiosRequestConfig} from "axios";
 import {ClientAbstract, CredentialsInterface, TokenStoreInterface} from "sdkgen-client"
 import {HttpBearer} from "sdkgen-client"
+import {Anonymous} from "sdkgen-client"
 import {ClientException, UnknownStatusCodeException} from "sdkgen-client";
 
 import {ChannelTag} from "./ChannelTag";
+import {MessageTag} from "./MessageTag";
 import {UserTag} from "./UserTag";
 
 export class Client extends ClientAbstract {
     public channel(): ChannelTag
     {
         return new ChannelTag(
+            this.httpClient,
+            this.parser
+        );
+    }
+
+    public message(): MessageTag
+    {
+        return new MessageTag(
             this.httpClient,
             this.parser
         );
@@ -33,5 +43,10 @@ export class Client extends ClientAbstract {
     public static build(token: string): Client
     {
         return new Client('https://discord.com/api/v10', new HttpBearer(token));
+    }
+
+    public static buildAnonymous(): Client
+    {
+        return new Client('https://discord.com/api/v10', new Anonymous());
     }
 }

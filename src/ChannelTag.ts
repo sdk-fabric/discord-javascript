@@ -8,33 +8,15 @@ import {TagAbstract} from "sdkgen-client"
 import {ClientException, UnknownStatusCodeException} from "sdkgen-client";
 
 import {Channel} from "./Channel";
-import {ChannelMessageTag} from "./ChannelMessageTag";
-import {ChannelReactionTag} from "./ChannelReactionTag";
 import {ErrorException} from "./ErrorException";
 import {Message} from "./Message";
 
 export class ChannelTag extends TagAbstract {
-    public message(): ChannelMessageTag
-    {
-        return new ChannelMessageTag(
-            this.httpClient,
-            this.parser
-        );
-    }
-
-    public reaction(): ChannelReactionTag
-    {
-        return new ChannelReactionTag(
-            this.httpClient,
-            this.parser
-        );
-    }
-
     /**
      * Get a channel by ID. Returns a channel object.
      *
      * @returns {Promise<Channel>}
-     * @throws {ErrorExceptionException}
+     * @throws {ErrorException}
      * @throws {ClientException}
      */
     public async get(channelId: string): Promise<Channel> {
@@ -45,6 +27,8 @@ export class ChannelTag extends TagAbstract {
         let params: AxiosRequestConfig = {
             url: url,
             method: 'GET',
+            headers: {
+            },
             params: this.parser.query({
             }, [
             ]),
@@ -57,16 +41,21 @@ export class ChannelTag extends TagAbstract {
             if (error instanceof ClientException) {
                 throw error;
             } else if (axios.isAxiosError(error) && error.response) {
-                switch (error.response.status) {
-                    case 400:
-                        throw new ErrorException(error.response.data);
-                    case 404:
-                        throw new ErrorException(error.response.data);
-                    case 500:
-                        throw new ErrorException(error.response.data);
-                    default:
-                        throw new UnknownStatusCodeException('The server returned an unknown status code');
+                const statusCode = error.response.status;
+
+                if (statusCode === 400) {
+                    throw new ErrorException(error.response.data);
                 }
+
+                if (statusCode === 404) {
+                    throw new ErrorException(error.response.data);
+                }
+
+                if (statusCode === 500) {
+                    throw new ErrorException(error.response.data);
+                }
+
+                throw new UnknownStatusCodeException('The server returned an unknown status code: ' + statusCode);
             } else {
                 throw new ClientException('An unknown error occurred: ' + String(error));
             }
@@ -77,7 +66,7 @@ export class ChannelTag extends TagAbstract {
      * Returns all pinned messages in the channel as an array of message objects.
      *
      * @returns {Promise<Array<Message>>}
-     * @throws {ErrorExceptionException}
+     * @throws {ErrorException}
      * @throws {ClientException}
      */
     public async getPins(channelId: string): Promise<Array<Message>> {
@@ -88,6 +77,8 @@ export class ChannelTag extends TagAbstract {
         let params: AxiosRequestConfig = {
             url: url,
             method: 'GET',
+            headers: {
+            },
             params: this.parser.query({
             }, [
             ]),
@@ -100,16 +91,21 @@ export class ChannelTag extends TagAbstract {
             if (error instanceof ClientException) {
                 throw error;
             } else if (axios.isAxiosError(error) && error.response) {
-                switch (error.response.status) {
-                    case 400:
-                        throw new ErrorException(error.response.data);
-                    case 404:
-                        throw new ErrorException(error.response.data);
-                    case 500:
-                        throw new ErrorException(error.response.data);
-                    default:
-                        throw new UnknownStatusCodeException('The server returned an unknown status code');
+                const statusCode = error.response.status;
+
+                if (statusCode === 400) {
+                    throw new ErrorException(error.response.data);
                 }
+
+                if (statusCode === 404) {
+                    throw new ErrorException(error.response.data);
+                }
+
+                if (statusCode === 500) {
+                    throw new ErrorException(error.response.data);
+                }
+
+                throw new UnknownStatusCodeException('The server returned an unknown status code: ' + statusCode);
             } else {
                 throw new ClientException('An unknown error occurred: ' + String(error));
             }
