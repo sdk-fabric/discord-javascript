@@ -5,6 +5,7 @@
 
 import {MessageEmbed} from "./MessageEmbed";
 import {MessageAllowedMentions} from "./MessageAllowedMentions";
+
 export interface Message {
     content?: string
     nonce?: string
@@ -15,3 +16,4 @@ export interface Message {
     flags?: number
     enforce_nonce?: boolean
 }
+

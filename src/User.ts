@@ -21,3 +21,4 @@ export interface User {
     premium_type?: number
     public_flags?: number
 }
+

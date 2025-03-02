@@ -3,10 +3,11 @@
  * {@link https://sdkgen.app}
  */
 
-import axios, {AxiosRequestConfig} from "axios";
-import {TagAbstract} from "sdkgen-client"
+import {TagAbstract, HttpRequest} from "sdkgen-client"
 import {ClientException, UnknownStatusCodeException} from "sdkgen-client";
 
+import {Error} from "./Error";
+import {ErrorException} from "./ErrorException";
 import {User} from "./User";
 
 export class UserTag extends TagAbstract {
@@ -14,13 +15,14 @@ export class UserTag extends TagAbstract {
      * Returns the user object of the requester's account. For OAuth2, this requires the identify scope, which will return the object without an email, and optionally the email scope, which returns the object with an email.
      *
      * @returns {Promise<User>}
+     * @throws {ErrorException}
      * @throws {ClientException}
      */
-    public async get(): Promise<User> {
+    public async getCurrent(): Promise<User> {
         const url = this.parser.url('/users/@me', {
         });
 
-        let params: AxiosRequestConfig = {
+        let request: HttpRequest = {
             url: url,
             method: 'GET',
             headers: {
@@ -30,21 +32,53 @@ export class UserTag extends TagAbstract {
             ]),
         };
 
-        try {
-            const response = await this.httpClient.request<User>(params);
-            return response.data;
-        } catch (error) {
-            if (error instanceof ClientException) {
-                throw error;
-            } else if (axios.isAxiosError(error) && error.response) {
-                const statusCode = error.response.status;
-
-                throw new UnknownStatusCodeException('The server returned an unknown status code: ' + statusCode);
-            } else {
-                throw new ClientException('An unknown error occurred: ' + String(error));
-            }
+        const response = await this.httpClient.request(request);
+        if (response.ok) {
+            return await response.json() as User;
         }
+
+        const statusCode = response.status;
+        if (statusCode >= 0 && statusCode <= 999) {
+            throw new ErrorException(await response.json() as Error);
+        }
+
+        throw new UnknownStatusCodeException('The server returned an unknown status code: ' + statusCode);
     }
+    /**
+     * Returns a user object for a given user ID.
+     *
+     * @returns {Promise<User>}
+     * @throws {ErrorException}
+     * @throws {ClientException}
+     */
+    public async get(userId: string): Promise<User> {
+        const url = this.parser.url('/users/:user_id', {
+            'user_id': userId,
+        });
+
+        let request: HttpRequest = {
+            url: url,
+            method: 'GET',
+            headers: {
+            },
+            params: this.parser.query({
+            }, [
+            ]),
+        };
+
+        const response = await this.httpClient.request(request);
+        if (response.ok) {
+            return await response.json() as User;
+        }
+
+        const statusCode = response.status;
+        if (statusCode >= 0 && statusCode <= 999) {
+            throw new ErrorException(await response.json() as Error);
+        }
+
+        throw new UnknownStatusCodeException('The server returned an unknown status code: ' + statusCode);
+    }
+
 
 
 }

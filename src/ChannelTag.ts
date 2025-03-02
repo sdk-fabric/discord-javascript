@@ -3,11 +3,12 @@
  * {@link https://sdkgen.app}
  */
 
-import axios, {AxiosRequestConfig} from "axios";
-import {TagAbstract} from "sdkgen-client"
+import {TagAbstract, HttpRequest} from "sdkgen-client"
 import {ClientException, UnknownStatusCodeException} from "sdkgen-client";
 
 import {Channel} from "./Channel";
+import {ChannelUpdate} from "./ChannelUpdate";
+import {Error} from "./Error";
 import {ErrorException} from "./ErrorException";
 import {Message} from "./Message";
 
@@ -24,7 +25,7 @@ export class ChannelTag extends TagAbstract {
             'channel_id': channelId,
         });
 
-        let params: AxiosRequestConfig = {
+        let request: HttpRequest = {
             url: url,
             method: 'GET',
             headers: {
@@ -34,34 +35,54 @@ export class ChannelTag extends TagAbstract {
             ]),
         };
 
-        try {
-            const response = await this.httpClient.request<Channel>(params);
-            return response.data;
-        } catch (error) {
-            if (error instanceof ClientException) {
-                throw error;
-            } else if (axios.isAxiosError(error) && error.response) {
-                const statusCode = error.response.status;
-
-                if (statusCode === 400) {
-                    throw new ErrorException(error.response.data);
-                }
-
-                if (statusCode === 404) {
-                    throw new ErrorException(error.response.data);
-                }
-
-                if (statusCode === 500) {
-                    throw new ErrorException(error.response.data);
-                }
-
-                throw new UnknownStatusCodeException('The server returned an unknown status code: ' + statusCode);
-            } else {
-                throw new ClientException('An unknown error occurred: ' + String(error));
-            }
+        const response = await this.httpClient.request(request);
+        if (response.ok) {
+            return await response.json() as Channel;
         }
-    }
 
+        const statusCode = response.status;
+        if (statusCode >= 0 && statusCode <= 999) {
+            throw new ErrorException(await response.json() as Error);
+        }
+
+        throw new UnknownStatusCodeException('The server returned an unknown status code: ' + statusCode);
+    }
+    /**
+     * Update a channel's settings. Returns a channel on success, and a 400 BAD REQUEST on invalid parameters.
+     *
+     * @returns {Promise<Channel>}
+     * @throws {ErrorException}
+     * @throws {ClientException}
+     */
+    public async update(channelId: string, payload: ChannelUpdate): Promise<Channel> {
+        const url = this.parser.url('/channels/:channel_id', {
+            'channel_id': channelId,
+        });
+
+        let request: HttpRequest = {
+            url: url,
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            params: this.parser.query({
+            }, [
+            ]),
+            data: payload
+        };
+
+        const response = await this.httpClient.request(request);
+        if (response.ok) {
+            return await response.json() as Channel;
+        }
+
+        const statusCode = response.status;
+        if (statusCode >= 0 && statusCode <= 999) {
+            throw new ErrorException(await response.json() as Error);
+        }
+
+        throw new UnknownStatusCodeException('The server returned an unknown status code: ' + statusCode);
+    }
     /**
      * Returns all pinned messages in the channel as an array of message objects.
      *
@@ -74,7 +95,7 @@ export class ChannelTag extends TagAbstract {
             'channel_id': channelId,
         });
 
-        let params: AxiosRequestConfig = {
+        let request: HttpRequest = {
             url: url,
             method: 'GET',
             headers: {
@@ -84,33 +105,19 @@ export class ChannelTag extends TagAbstract {
             ]),
         };
 
-        try {
-            const response = await this.httpClient.request<Array<Message>>(params);
-            return response.data;
-        } catch (error) {
-            if (error instanceof ClientException) {
-                throw error;
-            } else if (axios.isAxiosError(error) && error.response) {
-                const statusCode = error.response.status;
-
-                if (statusCode === 400) {
-                    throw new ErrorException(error.response.data);
-                }
-
-                if (statusCode === 404) {
-                    throw new ErrorException(error.response.data);
-                }
-
-                if (statusCode === 500) {
-                    throw new ErrorException(error.response.data);
-                }
-
-                throw new UnknownStatusCodeException('The server returned an unknown status code: ' + statusCode);
-            } else {
-                throw new ClientException('An unknown error occurred: ' + String(error));
-            }
+        const response = await this.httpClient.request(request);
+        if (response.ok) {
+            return await response.json() as Array<Message>;
         }
+
+        const statusCode = response.status;
+        if (statusCode >= 0 && statusCode <= 999) {
+            throw new ErrorException(await response.json() as Error);
+        }
+
+        throw new UnknownStatusCodeException('The server returned an unknown status code: ' + statusCode);
     }
+
 
 
 }

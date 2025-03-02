@@ -9,3 +9,4 @@ export interface MessageReference {
     guild_id?: string
     fail_if_not_exists?: boolean
 }
+

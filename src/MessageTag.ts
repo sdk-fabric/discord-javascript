@@ -3,10 +3,10 @@
  * {@link https://sdkgen.app}
  */
 
-import axios, {AxiosRequestConfig} from "axios";
-import {TagAbstract} from "sdkgen-client"
+import {TagAbstract, HttpRequest} from "sdkgen-client"
 import {ClientException, UnknownStatusCodeException} from "sdkgen-client";
 
+import {Error} from "./Error";
 import {ErrorException} from "./ErrorException";
 import {Message} from "./Message";
 import {User} from "./User";
@@ -24,7 +24,7 @@ export class MessageTag extends TagAbstract {
             'channel_id': channelId,
         });
 
-        let params: AxiosRequestConfig = {
+        let request: HttpRequest = {
             url: url,
             method: 'GET',
             headers: {
@@ -38,34 +38,18 @@ export class MessageTag extends TagAbstract {
             ]),
         };
 
-        try {
-            const response = await this.httpClient.request<Array<Message>>(params);
-            return response.data;
-        } catch (error) {
-            if (error instanceof ClientException) {
-                throw error;
-            } else if (axios.isAxiosError(error) && error.response) {
-                const statusCode = error.response.status;
-
-                if (statusCode === 400) {
-                    throw new ErrorException(error.response.data);
-                }
-
-                if (statusCode === 404) {
-                    throw new ErrorException(error.response.data);
-                }
-
-                if (statusCode === 500) {
-                    throw new ErrorException(error.response.data);
-                }
-
-                throw new UnknownStatusCodeException('The server returned an unknown status code: ' + statusCode);
-            } else {
-                throw new ClientException('An unknown error occurred: ' + String(error));
-            }
+        const response = await this.httpClient.request(request);
+        if (response.ok) {
+            return await response.json() as Array<Message>;
         }
-    }
 
+        const statusCode = response.status;
+        if (statusCode >= 0 && statusCode <= 999) {
+            throw new ErrorException(await response.json() as Error);
+        }
+
+        throw new UnknownStatusCodeException('The server returned an unknown status code: ' + statusCode);
+    }
     /**
      * Retrieves a specific message in the channel. Returns a message object on success.
      *
@@ -79,7 +63,7 @@ export class MessageTag extends TagAbstract {
             'message_id': messageId,
         });
 
-        let params: AxiosRequestConfig = {
+        let request: HttpRequest = {
             url: url,
             method: 'GET',
             headers: {
@@ -89,34 +73,18 @@ export class MessageTag extends TagAbstract {
             ]),
         };
 
-        try {
-            const response = await this.httpClient.request<Message>(params);
-            return response.data;
-        } catch (error) {
-            if (error instanceof ClientException) {
-                throw error;
-            } else if (axios.isAxiosError(error) && error.response) {
-                const statusCode = error.response.status;
-
-                if (statusCode === 400) {
-                    throw new ErrorException(error.response.data);
-                }
-
-                if (statusCode === 404) {
-                    throw new ErrorException(error.response.data);
-                }
-
-                if (statusCode === 500) {
-                    throw new ErrorException(error.response.data);
-                }
-
-                throw new UnknownStatusCodeException('The server returned an unknown status code: ' + statusCode);
-            } else {
-                throw new ClientException('An unknown error occurred: ' + String(error));
-            }
+        const response = await this.httpClient.request(request);
+        if (response.ok) {
+            return await response.json() as Message;
         }
-    }
 
+        const statusCode = response.status;
+        if (statusCode >= 0 && statusCode <= 999) {
+            throw new ErrorException(await response.json() as Error);
+        }
+
+        throw new UnknownStatusCodeException('The server returned an unknown status code: ' + statusCode);
+    }
     /**
      * Post a message to a guild text or DM channel. Returns a message object. Fires a Message Create Gateway event. See message formatting for more information on how to properly format messages.
      *
@@ -129,7 +97,7 @@ export class MessageTag extends TagAbstract {
             'channel_id': channelId,
         });
 
-        let params: AxiosRequestConfig = {
+        let request: HttpRequest = {
             url: url,
             method: 'POST',
             headers: {
@@ -141,34 +109,18 @@ export class MessageTag extends TagAbstract {
             data: payload
         };
 
-        try {
-            const response = await this.httpClient.request<Message>(params);
-            return response.data;
-        } catch (error) {
-            if (error instanceof ClientException) {
-                throw error;
-            } else if (axios.isAxiosError(error) && error.response) {
-                const statusCode = error.response.status;
-
-                if (statusCode === 400) {
-                    throw new ErrorException(error.response.data);
-                }
-
-                if (statusCode === 404) {
-                    throw new ErrorException(error.response.data);
-                }
-
-                if (statusCode === 500) {
-                    throw new ErrorException(error.response.data);
-                }
-
-                throw new UnknownStatusCodeException('The server returned an unknown status code: ' + statusCode);
-            } else {
-                throw new ClientException('An unknown error occurred: ' + String(error));
-            }
+        const response = await this.httpClient.request(request);
+        if (response.ok) {
+            return await response.json() as Message;
         }
-    }
 
+        const statusCode = response.status;
+        if (statusCode >= 0 && statusCode <= 999) {
+            throw new ErrorException(await response.json() as Error);
+        }
+
+        throw new UnknownStatusCodeException('The server returned an unknown status code: ' + statusCode);
+    }
     /**
      * Edit a previously sent message. The fields content, embeds, and flags can be edited by the original message author. Other users can only edit flags and only if they have the MANAGE_MESSAGES permission in the corresponding channel. When specifying flags, ensure to include all previously set flags/bits in addition to ones that you are modifying. Only flags documented in the table below may be modified by users (unsupported flag changes are currently ignored without error).
      *
@@ -182,7 +134,7 @@ export class MessageTag extends TagAbstract {
             'message_id': messageId,
         });
 
-        let params: AxiosRequestConfig = {
+        let request: HttpRequest = {
             url: url,
             method: 'PATCH',
             headers: {
@@ -194,34 +146,18 @@ export class MessageTag extends TagAbstract {
             data: payload
         };
 
-        try {
-            const response = await this.httpClient.request<Message>(params);
-            return response.data;
-        } catch (error) {
-            if (error instanceof ClientException) {
-                throw error;
-            } else if (axios.isAxiosError(error) && error.response) {
-                const statusCode = error.response.status;
-
-                if (statusCode === 400) {
-                    throw new ErrorException(error.response.data);
-                }
-
-                if (statusCode === 404) {
-                    throw new ErrorException(error.response.data);
-                }
-
-                if (statusCode === 500) {
-                    throw new ErrorException(error.response.data);
-                }
-
-                throw new UnknownStatusCodeException('The server returned an unknown status code: ' + statusCode);
-            } else {
-                throw new ClientException('An unknown error occurred: ' + String(error));
-            }
+        const response = await this.httpClient.request(request);
+        if (response.ok) {
+            return await response.json() as Message;
         }
-    }
 
+        const statusCode = response.status;
+        if (statusCode >= 0 && statusCode <= 999) {
+            throw new ErrorException(await response.json() as Error);
+        }
+
+        throw new UnknownStatusCodeException('The server returned an unknown status code: ' + statusCode);
+    }
     /**
      * Delete a message. If operating on a guild channel and trying to delete a message that was not sent by the current user, this endpoint requires the MANAGE_MESSAGES permission.
      *
@@ -235,7 +171,7 @@ export class MessageTag extends TagAbstract {
             'message_id': messageId,
         });
 
-        let params: AxiosRequestConfig = {
+        let request: HttpRequest = {
             url: url,
             method: 'DELETE',
             headers: {
@@ -245,33 +181,17 @@ export class MessageTag extends TagAbstract {
             ]),
         };
 
-        try {
-            const response = await this.httpClient.request(params);
-        } catch (error) {
-            if (error instanceof ClientException) {
-                throw error;
-            } else if (axios.isAxiosError(error) && error.response) {
-                const statusCode = error.response.status;
-
-                if (statusCode === 400) {
-                    throw new ErrorException(error.response.data);
-                }
-
-                if (statusCode === 404) {
-                    throw new ErrorException(error.response.data);
-                }
-
-                if (statusCode === 500) {
-                    throw new ErrorException(error.response.data);
-                }
-
-                throw new UnknownStatusCodeException('The server returned an unknown status code: ' + statusCode);
-            } else {
-                throw new ClientException('An unknown error occurred: ' + String(error));
-            }
+        const response = await this.httpClient.request(request);
+        if (response.ok) {
         }
-    }
 
+        const statusCode = response.status;
+        if (statusCode >= 0 && statusCode <= 999) {
+            throw new ErrorException(await response.json() as Error);
+        }
+
+        throw new UnknownStatusCodeException('The server returned an unknown status code: ' + statusCode);
+    }
     /**
      * Crosspost a message in an Announcement Channel to following channels. This endpoint requires the SEND_MESSAGES permission, if the current user sent the message, or additionally the MANAGE_MESSAGES permission, for all other messages, to be present for the current user.
      *
@@ -285,7 +205,7 @@ export class MessageTag extends TagAbstract {
             'message_id': messageId,
         });
 
-        let params: AxiosRequestConfig = {
+        let request: HttpRequest = {
             url: url,
             method: 'POST',
             headers: {
@@ -295,34 +215,18 @@ export class MessageTag extends TagAbstract {
             ]),
         };
 
-        try {
-            const response = await this.httpClient.request<Message>(params);
-            return response.data;
-        } catch (error) {
-            if (error instanceof ClientException) {
-                throw error;
-            } else if (axios.isAxiosError(error) && error.response) {
-                const statusCode = error.response.status;
-
-                if (statusCode === 400) {
-                    throw new ErrorException(error.response.data);
-                }
-
-                if (statusCode === 404) {
-                    throw new ErrorException(error.response.data);
-                }
-
-                if (statusCode === 500) {
-                    throw new ErrorException(error.response.data);
-                }
-
-                throw new UnknownStatusCodeException('The server returned an unknown status code: ' + statusCode);
-            } else {
-                throw new ClientException('An unknown error occurred: ' + String(error));
-            }
+        const response = await this.httpClient.request(request);
+        if (response.ok) {
+            return await response.json() as Message;
         }
-    }
 
+        const statusCode = response.status;
+        if (statusCode >= 0 && statusCode <= 999) {
+            throw new ErrorException(await response.json() as Error);
+        }
+
+        throw new UnknownStatusCodeException('The server returned an unknown status code: ' + statusCode);
+    }
     /**
      * @returns {Promise<Array<User>>}
      * @throws {ErrorException}
@@ -335,7 +239,7 @@ export class MessageTag extends TagAbstract {
             'emoji': emoji,
         });
 
-        let params: AxiosRequestConfig = {
+        let request: HttpRequest = {
             url: url,
             method: 'GET',
             headers: {
@@ -348,34 +252,18 @@ export class MessageTag extends TagAbstract {
             ]),
         };
 
-        try {
-            const response = await this.httpClient.request<Array<User>>(params);
-            return response.data;
-        } catch (error) {
-            if (error instanceof ClientException) {
-                throw error;
-            } else if (axios.isAxiosError(error) && error.response) {
-                const statusCode = error.response.status;
-
-                if (statusCode === 400) {
-                    throw new ErrorException(error.response.data);
-                }
-
-                if (statusCode === 404) {
-                    throw new ErrorException(error.response.data);
-                }
-
-                if (statusCode === 500) {
-                    throw new ErrorException(error.response.data);
-                }
-
-                throw new UnknownStatusCodeException('The server returned an unknown status code: ' + statusCode);
-            } else {
-                throw new ClientException('An unknown error occurred: ' + String(error));
-            }
+        const response = await this.httpClient.request(request);
+        if (response.ok) {
+            return await response.json() as Array<User>;
         }
-    }
 
+        const statusCode = response.status;
+        if (statusCode >= 0 && statusCode <= 999) {
+            throw new ErrorException(await response.json() as Error);
+        }
+
+        throw new UnknownStatusCodeException('The server returned an unknown status code: ' + statusCode);
+    }
     /**
      * @returns {Promise<void>}
      * @throws {ErrorException}
@@ -387,7 +275,7 @@ export class MessageTag extends TagAbstract {
             'message_id': messageId,
         });
 
-        let params: AxiosRequestConfig = {
+        let request: HttpRequest = {
             url: url,
             method: 'DELETE',
             headers: {
@@ -397,32 +285,18 @@ export class MessageTag extends TagAbstract {
             ]),
         };
 
-        try {
-            const response = await this.httpClient.request(params);
-        } catch (error) {
-            if (error instanceof ClientException) {
-                throw error;
-            } else if (axios.isAxiosError(error) && error.response) {
-                const statusCode = error.response.status;
-
-                if (statusCode === 400) {
-                    throw new ErrorException(error.response.data);
-                }
-
-                if (statusCode === 404) {
-                    throw new ErrorException(error.response.data);
-                }
-
-                if (statusCode === 500) {
-                    throw new ErrorException(error.response.data);
-                }
-
-                throw new UnknownStatusCodeException('The server returned an unknown status code: ' + statusCode);
-            } else {
-                throw new ClientException('An unknown error occurred: ' + String(error));
-            }
+        const response = await this.httpClient.request(request);
+        if (response.ok) {
         }
+
+        const statusCode = response.status;
+        if (statusCode >= 0 && statusCode <= 999) {
+            throw new ErrorException(await response.json() as Error);
+        }
+
+        throw new UnknownStatusCodeException('The server returned an unknown status code: ' + statusCode);
     }
+
 
 
 }

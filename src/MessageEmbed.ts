@@ -11,3 +11,4 @@ export interface MessageEmbed {
     timestamp?: string
     color?: number
 }
+
