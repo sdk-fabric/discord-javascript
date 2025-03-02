@@ -7,6 +7,7 @@ import {TagAbstract, HttpRequest} from "sdkgen-client"
 import {ClientException, UnknownStatusCodeException} from "sdkgen-client";
 
 import {Channel} from "./Channel";
+import {ChannelInvite} from "./ChannelInvite";
 import {ChannelUpdate} from "./ChannelUpdate";
 import {Error} from "./Error";
 import {ErrorException} from "./ErrorException";
@@ -142,6 +143,42 @@ export class ChannelTag extends TagAbstract {
         const response = await this.httpClient.request(request);
         if (response.ok) {
             return await response.json() as Array<Message>;
+        }
+
+        const statusCode = response.status;
+        if (statusCode >= 0 && statusCode <= 999) {
+            throw new ErrorException(await response.json() as Error);
+        }
+
+        throw new UnknownStatusCodeException('The server returned an unknown status code: ' + statusCode);
+    }
+    /**
+     * Create a new invite object for the channel. Only usable for guild channels. Requires the CREATE_INSTANT_INVITE permission. All JSON parameters for this route are optional, however the request body is not. If you are not sending any fields, you still have to send an empty JSON object ({}). Returns an invite object. Fires an Invite Create Gateway event.
+     *
+     * @returns {Promise<ChannelInvite>}
+     * @throws {ErrorException}
+     * @throws {ClientException}
+     */
+    public async createInvite(channelId: string, payload: ChannelInvite): Promise<ChannelInvite> {
+        const url = this.parser.url('/channels/:channel_id/invites', {
+            'channel_id': channelId,
+        });
+
+        let request: HttpRequest = {
+            url: url,
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            params: this.parser.query({
+            }, [
+            ]),
+            data: payload
+        };
+
+        const response = await this.httpClient.request(request);
+        if (response.ok) {
+            return await response.json() as ChannelInvite;
         }
 
         const statusCode = response.status;
