@@ -84,6 +84,40 @@ export class ChannelTag extends TagAbstract {
         throw new UnknownStatusCodeException('The server returned an unknown status code: ' + statusCode);
     }
     /**
+     * Delete a channel, or close a private message. Requires the MANAGE_CHANNELS permission for the guild, or MANAGE_THREADS if the channel is a thread. Deleting a category does not delete its child channels; they will have their parent_id removed and a Channel Update Gateway event will fire for each of them. Returns a channel object on success. Fires a Channel Delete Gateway event (or Thread Delete if the channel was a thread).
+     *
+     * @returns {Promise<Channel>}
+     * @throws {ErrorException}
+     * @throws {ClientException}
+     */
+    public async delete(channelId: string): Promise<Channel> {
+        const url = this.parser.url('/channels/:channel_id', {
+            'channel_id': channelId,
+        });
+
+        let request: HttpRequest = {
+            url: url,
+            method: 'DELETE',
+            headers: {
+            },
+            params: this.parser.query({
+            }, [
+            ]),
+        };
+
+        const response = await this.httpClient.request(request);
+        if (response.ok) {
+            return await response.json() as Channel;
+        }
+
+        const statusCode = response.status;
+        if (statusCode >= 0 && statusCode <= 999) {
+            throw new ErrorException(await response.json() as Error);
+        }
+
+        throw new UnknownStatusCodeException('The server returned an unknown status code: ' + statusCode);
+    }
+    /**
      * Returns all pinned messages in the channel as an array of message objects.
      *
      * @returns {Promise<Array<Message>>}
