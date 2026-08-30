@@ -1,9 +1,4 @@
 {
-  "typehub_user": "sdkfabric",
-  "typehub_document": "discord",
-  "github_user": "sdk-fabric",
-  "github_repository": "discord-javascript",
-
   "name": "@sdkfabric/discord",
   "description": "Discord JavaScript SDK managed by SDK Fabric",
   "website": "https://sdk-fabric.org"
