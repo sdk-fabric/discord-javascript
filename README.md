@@ -16,19 +16,19 @@ const client = Client::build('[access_token]');
 const response = await client.channel().get("channel_id");
 
 // Update a channel's settings.
-const response = await client.channel().update("channel_id", new ChannelUpdate());
+const response = await client.channel().update("channel_id", new Channel_Update());
 
 // Delete a channel, or close a private message.
 const response = await client.channel().delete("channel_id");
 
 // Returns all pinned messages in the channel as an array of message objects.
-const response = await client.channel().getpins("channel_id");
+const response = await client.channel().getPins("channel_id");
 
 // Create a new invite object for the channel.
-const response = await client.channel().createinvite("channel_id", new ChannelInvite());
+const response = await client.channel().createInvite("channel_id", new Channel_Invite());
 
 // Retrieves the messages in a channel.
-const response = await client.message().getall("channel_id", "around", "before", "after", 1);
+const response = await client.message().getAll("channel_id", "around", "before", "after", 1);
 
 // Retrieves a specific message in the channel.
 const response = await client.message().get("channel_id", "message_id");
@@ -45,12 +45,12 @@ const response = await client.message().remove("channel_id", "message_id");
 // Crosspost a message in an Announcement Channel to following channels.
 const response = await client.message().crosspost("channel_id", "message_id");
 
-const response = await client.message().getreactionsbyemoji("channel_id", "message_id", "emoji", 1, "after", 1);
+const response = await client.message().getReactionsByEmoji("channel_id", "message_id", "emoji", 1, "after", 1);
 
-const response = await client.message().deleteallreactions("channel_id", "message_id");
+const response = await client.message().deleteAllReactions("channel_id", "message_id");
 
 // Returns the user object of the requester's account.
-const response = await client.user().getcurrent();
+const response = await client.user().getCurrent();
 
 // Returns a user object for a given user ID.
 const response = await client.user().get("user_id");
