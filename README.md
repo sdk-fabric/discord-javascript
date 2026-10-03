@@ -1,28 +1,57 @@
 
-# Discord SDK
+# discord-javascript
 
-This SDK is managed by the [SDK Fabric](https://sdk-fabric.org/) project.
-Our goal is to build a global infrastructure to automatically generate
-an SDK for every API, please take a look at our website for more information.
+This [SDK](https://github.com/sdk-fabric/discord-javascript) is managed by the [SDK Fabric](https://sdk-fabric.org/) project, a global infrastructure to
+automatically generate SDKs for every API.
 
-## Contribution
-
-Please do not create a pull requests at this repository since the code is
-automatically generated. If an operation or type is missing at the client SDK
-please register at the [TypeHub](https://typehub.cloud/) platform and create
-a pull request at the [Discord](https://app.typehub.cloud/d/sdkfabric/discord)
-specification. The system will then automatically create a GIT commit and update
-the code.
+You can find more information about this SDK at [TypeHub](https://typehub.cloud/):
+https://app.typehub.cloud/d/sdkfabric/discord
 
 ## Usage
-
-The following example shows how you initialize the client:
 
 ```typescript
 const client = Client::build('[access_token]');
 
-// @TODO use the client
-```
+// Get a channel by ID.
+const response = await client.channel().get("channel_id");
 
-You can find all available operations and types at:
-https://app.typehub.cloud/d/sdkfabric/discord
+// Update a channel's settings.
+const response = await client.channel().update("channel_id", new Channel_Update());
+
+// Delete a channel, or close a private message.
+const response = await client.channel().delete("channel_id");
+
+// Returns all pinned messages in the channel as an array of message objects.
+const response = await client.channel().getPins("channel_id");
+
+// Create a new invite object for the channel.
+const response = await client.channel().createInvite("channel_id", new Channel_Invite());
+
+// Retrieves the messages in a channel.
+const response = await client.message().getAll("channel_id", "around", "before", "after", 1);
+
+// Retrieves a specific message in the channel.
+const response = await client.message().get("channel_id", "message_id");
+
+// Post a message to a guild text or DM channel.
+const response = await client.message().create("channel_id", new Message());
+
+// Edit a previously sent message.
+const response = await client.message().update("channel_id", "message_id", new Message());
+
+// Delete a message.
+const response = await client.message().remove("channel_id", "message_id");
+
+// Crosspost a message in an Announcement Channel to following channels.
+const response = await client.message().crosspost("channel_id", "message_id");
+
+const response = await client.message().getReactionsByEmoji("channel_id", "message_id", "emoji", 1, "after", 1);
+
+const response = await client.message().deleteAllReactions("channel_id", "message_id");
+
+// Returns the user object of the requester's account.
+const response = await client.user().getCurrent();
+
+// Returns a user object for a given user ID.
+const response = await client.user().get("user_id");
+```
